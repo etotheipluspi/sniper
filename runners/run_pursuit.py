@@ -20,7 +20,7 @@ ENV_OPTIONS = [
     ('map_type', str, 'rectangle', ''),
     ('n_catch', int, 2, ''),
     ('urgency', float, 0.0, ''),
-    ('surround', int, 1, ''),
+    ('surround', int, 1, ''), #n_evaders must be >= 4 for surround to work 
     ('map_file', str, None, ''),
     ('sample_maps', int, 0, ''),
     ('flatten', int, 1, ''),

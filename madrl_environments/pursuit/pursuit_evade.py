@@ -26,6 +26,8 @@ from rltools.util import EzPickle
 class PursuitEvade(AbstractMAEnv, EzPickle):
 
     def __init__(self, map_pool, **kwargs):
+        # kwargs = dictionary where you can pop key of size 1 off to define term 
+        # if present, assign value and if not use default 
         EzPickle.__init__(self, map_pool, **kwargs)
         """
         In evade purusit a set of pursuers must 'tag' a set of evaders
@@ -65,7 +67,10 @@ class PursuitEvade(AbstractMAEnv, EzPickle):
         self.obs_offset = int((self.obs_range - 1) / 2)
 
         self.flatten = kwargs.pop('flatten', True)
-
+        
+        #self.pursuers = list of single agent entities that define how it should move given inputs 
+        #helper function for creating list 
+        #pursuers and evaders in sniper problem is -> sniper and target (and specify how many in enviornment)
         self.pursuers = agent_utils.create_agents(self.n_pursuers, map_matrix, self.obs_range, flatten=self.flatten)
         self.evaders = agent_utils.create_agents(self.n_evaders, map_matrix, self.obs_range, flatten=self.flatten)
 
@@ -392,6 +397,7 @@ class PursuitEvade(AbstractMAEnv, EzPickle):
     def update_opponent_controller(self, controller):
         self.opponent_controller = controller
 
+    #just for serializing object, do not implement for sniper 
     def __getstate__(self):
         d = EzPickle.__getstate__(self)
         d['constraint_window'] = self.constraint_window
@@ -425,6 +431,8 @@ class PursuitEvade(AbstractMAEnv, EzPickle):
                 nage += 1
         return obs
 
+    #self.model_state = 3D matrix
+
     def collect_obs_by_idx(self, agent_layer, agent_idx):
         # returns a flattened array of all the observations
         n = agent_layer.n_agents()
@@ -436,6 +444,7 @@ class PursuitEvade(AbstractMAEnv, EzPickle):
         self.local_obs[agent_idx, 0:3, xolo:xohi, yolo:yohi] = np.abs(
                                                     self.model_state[0:3, xlo:xhi, ylo:yhi]) / self.layer_norm
         self.local_obs[agent_idx, 3, self.obs_range/2, self.obs_range/2] = float(agent_idx) / self.n_agents()
+
         if self.flatten:
             o = self.local_obs[agent_idx][0:3].flatten() 
             if self.include_id:
@@ -443,6 +452,7 @@ class PursuitEvade(AbstractMAEnv, EzPickle):
             return o
         # reshape output from (C, H, W) to (H, W, C)
         #return self.local_obs[agent_idx]
+
         return np.rollaxis(self.local_obs[agent_idx], 0, 3)
 
     def obs_clip(self, x, y):

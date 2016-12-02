@@ -33,10 +33,12 @@ def main():
     args = parser.parse_args()
 
     fh = FileHandler(args.filename)
+    env_map = TwoDMaps.rectangle_map(*map(int, fh.train_args['map_size'].split(',')))
+    map_pool = [env_map]
+    # map_pool = np.load(
+        # os.path.join('/scratch/megorov/deeprl/MADRL/runners/maps/', os.path.basename(fh.train_args[
+            # 'map_file'])))
 
-    map_pool = np.load(
-        os.path.join('/scratch/megorov/deeprl/MADRL/runners/maps/', os.path.basename(fh.train_args[
-            'map_file'])))
     env = PursuitEvade(map_pool, n_evaders=fh.train_args['n_evaders'],
                        n_pursuers=fh.train_args['n_pursuers'], obs_range=fh.train_args['obs_range'],
                        n_catch=fh.train_args['n_catch'], urgency_reward=fh.train_args['urgency'],
