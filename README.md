@@ -1,7 +1,7 @@
 Edit .tex 
 https://www.overleaf.com/6727006kkjjwg
 
-# MADRL
+# MADR
 
 run_pursuit.py 
 -Run pursuit_evade environment and log output: python run_pursuit.py rltools --control decentralized —-log output.h5
